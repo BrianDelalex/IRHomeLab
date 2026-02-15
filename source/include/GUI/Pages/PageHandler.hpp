@@ -1,0 +1,4 @@
+#ifndef PAGE_HANDLER_HPP
+# define PAGE_HANDLER_HPP
+
+#endif //!PAGE_HANDLER_HPP

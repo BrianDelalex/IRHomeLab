@@ -1,0 +1,4 @@
+#ifndef SPOTIFY_STATE_HPP
+# define SPOTIFY_STATE_HPP
+
+#endif //!SPOTIFY_STATE_HPP

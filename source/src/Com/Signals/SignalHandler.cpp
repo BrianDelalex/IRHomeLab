@@ -4,6 +4,7 @@
 # include <ranges>
 # include <iostream>
 # include <atomic>
+# include <format>
 
 namespace Com::Signals
 {
@@ -35,7 +36,7 @@ namespace Com::Signals
         if (sigaction(data.signal_number, &sa, nullptr) == -1)
         {
             std::cerr << __FUNCTION__ << " [ERROR]: Error in function sigaction for signal " << data.signal_number << std::endl;
-            return;
+            throw std::system_error(std::error_code(errno, std::generic_category()), std::format("Failed to register signal handler for signal {}", data.signal_number));
         }
         m_handlers.push_back(data);
     }

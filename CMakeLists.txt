@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -D__WXGTK3__ -D__WXGTK__ -D_FILE_OFFSET_BITS=64")
 
+add_subdirectory(RemoteControllerMock)
+
 # Setting wxWidgets build options
 set(wxWidgets_USE_STATIC 1)
 set(wxBUILD_SHARED OFF)

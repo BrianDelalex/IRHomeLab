@@ -1,0 +1,4 @@
+#ifndef ICONTROLLER_HPP_
+# define ICONTROLLER_HPP_
+
+#endif //!ICONTROLLER_HPP_
