@@ -1,4 +1,0 @@
-#ifndef SPOTIFY_VIEW_HPP_
-# define SPOTIFY_VIEW_HPP_
-
-#endif //!SPOTIFY_VIEW_HPP_
