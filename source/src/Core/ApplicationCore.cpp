@@ -13,6 +13,8 @@
 # include "irdriver.hpp"
 # include "Com/Signals/SignalHandler.hpp"
 
+# include "Core/Controllers/DummyController.hpp"
+
 namespace Core
 {
     static std::unique_ptr<ApplicationCore> APPLICATION_CORE_INSTANCE = std::make_unique<ApplicationCore>();
@@ -24,6 +26,10 @@ namespace Core
 
     ApplicationCore::ApplicationCore()
     {
+        for (int i = 0; i < WIDGET_NUMBER; i++) 
+        {
+            m_widget_controllers[i] = std::make_unique<Core::Controllers::DummyController>((WidgetsID)i); 
+        }
         SetupSignalHandlers();
         RegisterToIrDriver();
     }
@@ -31,6 +37,15 @@ namespace Core
     void ApplicationCore::RegisterPageChangeCallback(std::function<void(WidgetsID)> callback)
     {
         m_page_change_callback = callback;
+    }
+
+    void ApplicationCore::RegisterUpdateStateCallback(std::function<void(std::shared_ptr<Core::States::IState>, WidgetsID)> callback)
+    {
+        m_update_state_callback = callback;
+        for (int i = 0; i < WIDGET_NUMBER; i++)
+        {
+            m_widget_controllers.at(i)->RegisterStateChangeCallback(callback);
+        }
     }
     
     void ApplicationCore::SetupSignalHandlers()
@@ -78,9 +93,10 @@ namespace Core
             std::cerr << __FUNCTION__ << " [WARNING]: Received invalid button code " << sig_int << std::endl;
             return;
         }
-        if (sig_int >= IRButton::BTN_ZERO)
+
+        if (sig_int >= IRButton::BTN_ONE)
         {
-            WidgetsID widget_id = static_cast<WidgetsID>(sig_int - (int)IRButton::BTN_ZERO + 1);
+            WidgetsID widget_id = static_cast<WidgetsID>(sig_int - (int)IRButton::BTN_ONE);
             if (widget_id >= WidgetsID::UNDEFINED)
             {
                 std::cerr << __FUNCTION__ << " [WARNING]: Received button code " << sig_int << " which maps to invalid widget_id " << widget_id << std::endl;
@@ -95,7 +111,11 @@ namespace Core
             {
                 std::cerr << __FUNCTION__ << " [WARNING]: No page change callback registered, cannot change page to " << widget_id << std::endl;
             }
+            return;
         }
+
+        m_widget_controllers.at(m_selected_widget)->CommandHandler((IRButton) sig_int);
+        // TODO - Call Controller for selected widget to update state based on button pressed
     }
 
 } //  namespace Core

@@ -11,15 +11,11 @@ namespace GUI::Views
     class SpotifyView : public IView
     {
         public:
-            SpotifyView(wxWindow *parent, const wxSize &size);
+            SpotifyView(wxWindow *parent, const wxSize &size, ViewsID view_id);
         
         protected:
             void CreateView(void) override;
-            void UpdateView(Core::States::IState *state) override;
-
-            void OnStateChangedEvent(GUI::Events::StateEvent &event);
-
-            void BindEventHandlers(void);
+            void UpdateView(std::shared_ptr<Core::States::IState>state) override;
 
             GUI::Views::Components::SpotifyPlayerPanel *m_player;
     };

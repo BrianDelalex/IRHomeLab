@@ -7,18 +7,26 @@
 
 # include "WidgetsID.hpp"
 
+# include "Core/States/IState.hpp"
+# include "Core/Controllers/IController.hpp"
+
 namespace Core
 {
+    static const int WIDGET_NUMBER = 9;
+
     class ApplicationCore
     {
         public:
             ApplicationCore();
 
             void RegisterPageChangeCallback(std::function<void(WidgetsID)> callback);
+            void RegisterUpdateStateCallback(std::function<void(std::shared_ptr<Core::States::IState>, WidgetsID)> callback);
         private:
             std::unique_ptr<std::thread> m_thread_signal_handler_loop;
             std::function<void(WidgetsID)> m_page_change_callback;
-            WidgetsID m_selected_widget;
+            std::function<void(std::shared_ptr<Core::States::IState>, WidgetsID)> m_update_state_callback;
+            WidgetsID m_selected_widget{WidgetsID::SPOTIFY_ID};
+            std::array<std::unique_ptr<Core::Controllers::IController>, WIDGET_NUMBER> m_widget_controllers;
 
             void SetupSignalHandlers(void);
             void RegisterToIrDriver(void);

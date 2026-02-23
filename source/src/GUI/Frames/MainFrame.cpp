@@ -23,7 +23,6 @@ namespace GUI::Frames
 
     void MainFrame::BindEventHandlers()
     {
-        Bind(GUI::Events::EVT_CHANGE_PAGE, &GUI::Pages::PageHandler::OnChangePageEvent, m_page_handler);
     }
 
 

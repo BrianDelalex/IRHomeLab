@@ -3,6 +3,8 @@
 
 # include <wx/event.h>
 
+# include <memory>
+
 # include "Core/States/IState.hpp"
 
 namespace GUI::Events
@@ -13,13 +15,13 @@ namespace GUI::Events
     class StateEvent : public wxEvent
     {
     public:
-        StateEvent(int id, Core::States::IState* state, wxEventType eventType = EVT_STATE_CHANGED);
+        StateEvent(int id, std::shared_ptr<Core::States::IState> state, wxEventType eventType = EVT_STATE_CHANGED);
 
     
         // Inherited via wxEvent
         virtual wxEvent* Clone() const override;
 
-        Core::States::IState* state;
+        std::shared_ptr<Core::States::IState> state;
     };
 } //  namespace GUI::Events
 

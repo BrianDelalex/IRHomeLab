@@ -2,6 +2,7 @@
 
 # include "GUI/Views/Spotify/SpotifyView.hpp"
 # include "GUI/Views/DummyView.hpp"
+# include "GUI/Connector.hpp"
 # include "WidgetsID.hpp"
 
 namespace GUI::Pages
@@ -17,19 +18,21 @@ namespace GUI::Pages
     void PageHandler::CreateViews()
     {
         // Spotify view
-        auto *spotifyView = new GUI::Views::SpotifyView(this, GetSize());
-        InsertPage(WidgetsID::SPOTIFY_ID - 1, spotifyView, "spotify", true);
+        auto *spotifyView = new GUI::Views::SpotifyView(this, GetSize(), GUI::Views::SPOTIFY_VIEW_ID);
+        InsertPage(WidgetsID::SPOTIFY_ID, spotifyView, "spotify", true);
         wxColour dummy_colors[] = {*wxRED, *wxBLUE, *wxCYAN, *wxYELLOW, *wxLIGHT_GREY, *wxLIGHT_GREY, *wxLIGHT_GREY, *wxLIGHT_GREY, *wxLIGHT_GREY};
-        for (int i = 2; i < 10; i++)
+        for (int i = 1; i < 10; i++)
         {   
             wxString name = wxString::Format("dummy%d", i);
-            auto *dummyView = new GUI::Views::DummyView(this, GetSize(), dummy_colors[i - 2], name);
-            InsertPage(i - 1, dummyView, name, false);
+            auto *dummyView = new GUI::Views::DummyView(this, GetSize(), (GUI::Views::ViewsID)(GUI::Views::DUMMY1_VIEW_ID + i - 1), dummy_colors[i - 1], name);
+            InsertPage(i, dummyView, name, false);
         }
     }
 
     void PageHandler::BindEventHandlers()
     {
+        Connector *connector = get_connector_instance();
+        connector->Bind(GUI::Events::EVT_CHANGE_PAGE, &GUI::Pages::PageHandler::OnChangePageEvent, this);
     }
 
     void PageHandler::OnChangePageEvent(GUI::Events::PageEvent &event)
@@ -40,6 +43,6 @@ namespace GUI::Pages
             std::cerr << __FUNCTION__ << " [WARNING]: Received page change event with invalid widget_id " << event.widget_id << std::endl;
             return;
         }
-        SetSelection(event.widget_id - 1);
+        SetSelection(event.widget_id);
     }
 } //  namespace GUI::Pages

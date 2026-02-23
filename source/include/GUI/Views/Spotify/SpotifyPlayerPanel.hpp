@@ -14,7 +14,7 @@ class SpotifyPlayerPanel : public wxPanel
     public:
         SpotifyPlayerPanel(wxWindow *parent, const wxSize &size);
 
-        void UpdateState(Core::States::IState *state);
+        void UpdateState(std::shared_ptr<Core::States::IState>state);
 
     private:
         void CreatePanel(void);

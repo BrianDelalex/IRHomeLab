@@ -3,6 +3,8 @@
 
 # include <wx/wx.h>
 
+# include <memory>
+
 # include "GUI/Frames/MainFrame.hpp"
 
 # include "WidgetsID.hpp"
@@ -12,9 +14,10 @@ class App : public wxApp
     public:
         virtual bool OnInit(void) override;
 
-        void ChangeViewCallback(WidgetsID view_id);
-
     private:
+        void ChangeViewCallback(WidgetsID widget_id);
+        void UpdateStateCallback(std::shared_ptr<Core::States::IState>state, WidgetsID widget_id);
+
         GUI::Frames::MainFrame *frame;
 };
 

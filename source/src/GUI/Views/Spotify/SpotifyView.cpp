@@ -1,16 +1,14 @@
 # include "GUI/Views/Spotify/SpotifyView.hpp"
 
 # include "GUI/Events/StateEvent.hpp"
-# include "GUI/Views/ViewsID.hpp"
 
 namespace GUI::Views
 {
 
-    SpotifyView::SpotifyView(wxWindow *parent, const wxSize &size) :
-        IView(parent, size)
+    SpotifyView::SpotifyView(wxWindow *parent, const wxSize &size, ViewsID view_id) :
+        IView(parent, size, view_id)
     {
         CreateView();
-        BindEventHandlers();
     }
 
     void SpotifyView::CreateView()
@@ -24,19 +22,10 @@ namespace GUI::Views
         this->SetSizer(sizer);
     }
 
-    void SpotifyView::UpdateView(Core::States::IState *state)
+    void SpotifyView::UpdateView(std::shared_ptr<Core::States::IState>state)
     {
+        std::cout << __FUNCTION__ << " [INFO]: Updating Spotify view" << std::endl;
         SetBackgroundColour(*wxWHITE);
         m_player->UpdateState(state);
-    }
-
-    void SpotifyView::OnStateChangedEvent(GUI::Events::StateEvent &event)
-    {
-        UpdateView(event.state);
-    }
-
-    void SpotifyView::BindEventHandlers()
-    {
-        Bind(GUI::Events::EVT_STATE_CHANGED, &SpotifyView::OnStateChangedEvent, this, GUI::Views::SPOTIFY_VIEW_ID);
     }
 } //  namespace GUI::Views

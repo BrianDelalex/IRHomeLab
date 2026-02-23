@@ -3,7 +3,7 @@
 
 enum WidgetsID
 {
-    SPOTIFY_ID = 1,
+    SPOTIFY_ID = 0,
     DUMMY1_ID,
     DUMMY2_ID,
     DUMMY3_ID,

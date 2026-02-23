@@ -5,7 +5,7 @@ namespace GUI::Events
 
     wxDEFINE_EVENT(EVT_STATE_CHANGED, StateEvent);
 
-    StateEvent::StateEvent(int id, Core::States::IState *state, wxEventType eventType) :
+    StateEvent::StateEvent(int id, std::shared_ptr<Core::States::IState>state, wxEventType eventType) :
         wxEvent(id, eventType),
         state(state)
     {

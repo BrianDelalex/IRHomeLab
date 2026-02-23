@@ -22,7 +22,7 @@ namespace GUI::Views::Components
         this->SetSizer(main_sizer);
     }
 
-    void SpotifyPlayerPanel::UpdateState(Core::States::IState *state)
+    void SpotifyPlayerPanel::UpdateState(std::shared_ptr<Core::States::IState>state)
     {
         SetBackgroundColour(*wxWHITE);
     }

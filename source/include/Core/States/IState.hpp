@@ -5,7 +5,8 @@ namespace Core::States
 {
     class IState
     {
-
+        public:
+            virtual std::shared_ptr<IState> Clone() = 0;
     };
 } //  namespace Core::States
 
