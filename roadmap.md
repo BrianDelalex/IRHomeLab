@@ -1,0 +1,27 @@
+# Roadmap
+- [x] Setup
+    - [x] Setup a cross compilation toolchain
+- [ ] IRHomeLab
+    - [x] Create a wxWidgets application
+    - [x] Add differents views
+    - [x] Inteface with simple_ir_driver to receive signal
+    - [x] Create a dummy widget to test the following capabilities:
+        - [x] Change views using the IR RC
+        - [x] Update widget controller state where receicing signals from the RC
+        - [x] Update views state base on widget controller state
+    - [ ] Widgets
+        - [ ] Spotify player
+            - [ ] The music can be played/paused using the RC.
+            - [ ] The view show the playing/paused state.
+            - [ ] The view show the playing track cover, title, artist.
+            - [ ] Go to previous/next music using the RC.
+            - [ ] Control the volume of the music using the RC.
+        - [ ] Screensaver
+            - [ ] A screensaver view. (idea: small Game of life)
+            - [ ] The screensaver can be changed using the RC.
+        - [ ] Control center
+            - [ ] Host resources monitor
+            - [ ] Shutdown the application host using the RC.
+            - [ ] Restart the application host using the RC.
+        - [ ] AirPlay mirroring
+            - [ ] A view where it is possible to display airplay mirroring.
