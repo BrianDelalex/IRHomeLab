@@ -2,6 +2,7 @@
 # define ICONTROLLER_HPP_
 
 # include <iostream>
+# include <functional>
 
 # include "irdriver_api.h"
 # include "Core/States/IState.hpp"
@@ -15,7 +16,7 @@ namespace Core::Controllers
     class IController
     {
         public:
-            IController(WidgetsID id) : 
+            IController(WidgetsID id) :
                 m_id(id)
             {}
             virtual ~IController() = default;

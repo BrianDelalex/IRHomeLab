@@ -20,6 +20,8 @@ namespace GUI::Views
             }
             virtual ~IView() = default;
 
+            virtual bool AcceptsFocus() const override { return false; }
+
         protected:
             virtual void CreateView() = 0;
             virtual void UpdateView(std::shared_ptr<Core::States::IState>state) = 0;

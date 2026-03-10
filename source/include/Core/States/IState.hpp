@@ -1,6 +1,8 @@
 #ifndef ISTATE_HPP_
 # define ISTATE_HPP_
 
+# include <memory>
+
 namespace Core::States
 {
     class IState

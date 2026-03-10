@@ -19,6 +19,7 @@ namespace Core
         public:
             ApplicationCore();
 
+            void Init();
             void RegisterPageChangeCallback(std::function<void(WidgetsID)> callback);
             void RegisterUpdateStateCallback(std::function<void(std::shared_ptr<Core::States::IState>, WidgetsID)> callback);
         private:

@@ -7,15 +7,26 @@
 # include "GUI/Connector.hpp"
 
 # include "Core/ApplicationCore.hpp"
+# include "Config/AppConfig.hpp"
 
 wxIMPLEMENT_APP(App);
 bool App::OnInit(void)
 {
     frame = new GUI::Frames::MainFrame(nullptr, wxID_ANY, wxSize(1920, 1080));
     frame->Show();
+    CheckConfig();
+
+# ifdef DEBUG
+    m_mock_frame = new GUI::Debug::RemoteControllerMockFrame();
+    m_mock_frame->Show();
+    wxPoint main_pos = frame->GetPosition();
+    wxSize main_size = frame->GetSize();
+    wxSize mock_size = m_mock_frame->GetSize();
+    m_mock_frame->SetPosition(wxPoint(main_pos.x + main_size.GetWidth() - mock_size.GetWidth(), main_pos.y));
+# endif
 
     auto app_core = Core::get_application_core_instance();
-
+    app_core->Init();
     app_core->RegisterPageChangeCallback(std::bind_front(&App::ChangeViewCallback, this));
     app_core->RegisterUpdateStateCallback(std::bind_front(&App::UpdateStateCallback, this));
 
@@ -38,4 +49,28 @@ void App::UpdateStateCallback(std::shared_ptr<Core::States::IState>state, Widget
 
     Connector *connector = get_connector_instance();
     connector->QueueEvent(event);
+}
+
+void App::CheckConfig()
+{
+    auto *config = Config::get_app_config_instance();
+
+    if (!config->Contains("spotify_client"))
+    {
+        std::cerr << "Invalid Spotify setup. (prompting user...)" << std::endl;
+        wxTextEntryDialog client_id_dialog(nullptr, "Enter your Spotify Client ID:", "Spotify Setup");
+        if (client_id_dialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+
+        wxTextEntryDialog client_secret_dialog(nullptr, "Enter your spotify Client Secret:", "Spotify Setup");
+        if (client_secret_dialog.ShowModal() != wxID_OK)
+        {
+            return;
+        }
+        config->Set("spotify_client/client_id", client_id_dialog.GetValue().ToStdString());
+        config->Set("spotify_client/client_secret", client_secret_dialog.GetValue().ToStdString());
+        config->Save();
+    }
 }

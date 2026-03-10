@@ -9,6 +9,10 @@
 
 # include "WidgetsID.hpp"
 
+# ifdef DEBUG
+# include "Debug/RemoteControllerMockFrame.hpp"
+# endif
+
 class App : public wxApp
 {
     public:
@@ -17,8 +21,12 @@ class App : public wxApp
     private:
         void ChangeViewCallback(WidgetsID widget_id);
         void UpdateStateCallback(std::shared_ptr<Core::States::IState>state, WidgetsID widget_id);
+        void CheckConfig(void);
 
         GUI::Frames::MainFrame *frame;
+# ifdef DEBUG
+        GUI::Debug::RemoteControllerMockFrame *m_mock_frame;
+# endif
 };
 
 wxDECLARE_APP(App);

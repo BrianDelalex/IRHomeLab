@@ -1,6 +1,6 @@
 # include "Core/ApplicationCore.hpp"
 
-# include <thread> 
+# include <thread>
 # include <exception>
 # include <iostream>
 # include <filesystem>
@@ -14,6 +14,7 @@
 # include "Com/Signals/SignalHandler.hpp"
 
 # include "Core/Controllers/DummyController.hpp"
+# include "Core/Controllers/Spotify/SpotifyController.hpp"
 
 namespace Core
 {
@@ -26,9 +27,14 @@ namespace Core
 
     ApplicationCore::ApplicationCore()
     {
-        for (int i = 0; i < WIDGET_NUMBER; i++) 
+    }
+
+    void ApplicationCore::Init()
+    {
+        m_widget_controllers[0] = std::make_unique<Controllers::SpotifyController>((WidgetsID)0);
+        for (int i = 1; i < WIDGET_NUMBER; i++)
         {
-            m_widget_controllers[i] = std::make_unique<Core::Controllers::DummyController>((WidgetsID)i); 
+            m_widget_controllers[i] = std::make_unique<Core::Controllers::DummyController>((WidgetsID)i);
         }
         SetupSignalHandlers();
         RegisterToIrDriver();
@@ -47,7 +53,7 @@ namespace Core
             m_widget_controllers.at(i)->RegisterStateChangeCallback(callback);
         }
     }
-    
+
     void ApplicationCore::SetupSignalHandlers()
     {
         Com::Signals::SignalHandler *sig_handler = Com::Signals::get_signal_handler_instance();
