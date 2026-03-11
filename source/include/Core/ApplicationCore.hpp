@@ -12,17 +12,22 @@
 
 namespace Core
 {
-    static const int WIDGET_NUMBER = 9;
+    inline constexpr int WIDGET_NUMBER = 9;
 
     class ApplicationCore
     {
         public:
-            ApplicationCore();
+            static ApplicationCore& GetInstance();
+
+            ApplicationCore(const ApplicationCore&) = delete;
+            ApplicationCore& operator=(const ApplicationCore&) = delete;
 
             void Init();
             void RegisterPageChangeCallback(std::function<void(WidgetsID)> callback);
             void RegisterUpdateStateCallback(std::function<void(std::shared_ptr<Core::States::IState>, WidgetsID)> callback);
         private:
+            ApplicationCore() = default;
+
             std::unique_ptr<std::thread> m_thread_signal_handler_loop;
             std::function<void(WidgetsID)> m_page_change_callback;
             std::function<void(std::shared_ptr<Core::States::IState>, WidgetsID)> m_update_state_callback;
@@ -36,7 +41,6 @@ namespace Core
             void SIGIOHandler(int sig_int);
     };
 
-    ApplicationCore *get_application_core_instance(void);
 
 } //  namespace Core
 

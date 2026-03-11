@@ -1,7 +1,6 @@
 #ifndef ICONTROLLER_HPP_
 # define ICONTROLLER_HPP_
 
-# include <iostream>
 # include <functional>
 
 # include "irdriver_api.h"
@@ -23,20 +22,12 @@ namespace Core::Controllers
 
             virtual void CommandHandler(const IRButton& button) = 0;
 
-            void RegisterStateChangeCallback(StateChangeCallback& state_change_callback)
+            void RegisterStateChangeCallback(const StateChangeCallback& state_change_callback)
             {
                 m_state_change_callback = state_change_callback;
             }
 
-            void UpdateState(const std::shared_ptr<States::IState> &state)
-            {
-                if (!m_state_change_callback)
-                {
-                    std::cerr << __PRETTY_FUNCTION__ << ": [ERROR] state_change_callback is not set !" << std::endl;
-                    return;
-                }
-                m_state_change_callback(state, m_id);
-            }
+            void UpdateState(const std::shared_ptr<States::IState> &state);
 
         protected:
             WidgetsID m_id;

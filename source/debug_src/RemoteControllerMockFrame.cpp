@@ -54,7 +54,7 @@ namespace GUI::Debug
 
         for (const auto &[label, button] : BUTTON_LAYOUT)
         {
-            wxButton *btn = new wxButton(this, wxID_HIGHEST + (int)button, label);
+            wxButton *btn = new wxButton(this, wxID_HIGHEST + static_cast<int>(button), label);
             btn->Bind(wxEVT_BUTTON, &RemoteControllerMockFrame::OnButtonClicked, this);
             sizer->Add(btn, 1, wxEXPAND);
         }

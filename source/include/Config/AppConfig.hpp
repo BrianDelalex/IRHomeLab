@@ -11,7 +11,10 @@ namespace Config
     class AppConfig
     {
         public:
-            AppConfig();
+            static AppConfig& GetInstance();
+
+            AppConfig(const AppConfig&) = delete;
+            AppConfig& operator=(const AppConfig&) = delete;
 
             template<typename T>
             T Get(const std::string &key) const
@@ -38,13 +41,14 @@ namespace Config
             void Save(void);
 
         private:
+            AppConfig();
+
             void Load(void);
 
             std::filesystem::path m_config_path;
             nlohmann::json m_config;
     };
 
-    AppConfig *get_app_config_instance(void);
 
 } //  namespace Config
 

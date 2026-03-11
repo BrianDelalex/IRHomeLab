@@ -2,18 +2,16 @@
 
 # include <fstream>
 # include <iostream>
-# include <memory>
 
 namespace Config
 {
     static const std::string CONFIG_DIR_NAME = "IRHomeLab";
     static const std::string CONFIG_FILE_NAME = "config.json";
 
-    static std::unique_ptr<AppConfig> APP_CONFIG_INSTANCE = std::make_unique<AppConfig>();
-
-    AppConfig *get_app_config_instance()
+    AppConfig& AppConfig::GetInstance()
     {
-        return APP_CONFIG_INSTANCE.get();
+        static AppConfig instance;
+        return instance;
     }
 
     AppConfig::AppConfig()

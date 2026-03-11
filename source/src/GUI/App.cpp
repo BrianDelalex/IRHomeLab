@@ -25,10 +25,18 @@ bool App::OnInit(void)
     m_mock_frame->SetPosition(wxPoint(main_pos.x + main_size.GetWidth() - mock_size.GetWidth(), main_pos.y));
 # endif
 
-    auto app_core = Core::get_application_core_instance();
-    app_core->Init();
-    app_core->RegisterPageChangeCallback(std::bind_front(&App::ChangeViewCallback, this));
-    app_core->RegisterUpdateStateCallback(std::bind_front(&App::UpdateStateCallback, this));
+    auto& app_core = Core::ApplicationCore::GetInstance();
+    try
+    {
+        app_core.Init();
+    } catch (const std::filesystem::filesystem_error &e)
+    {
+        std::cerr << __FUNCTION__ << ": [EXCEPTION] caught: " << e.what() << std::endl;
+        wxMessageBox("IRHomeLab has failed to connect to irdriver. Make sure that the driver is running/installed!", "Initialization error", wxOK);
+        return false;
+    }
+    app_core.RegisterPageChangeCallback(std::bind_front(&App::ChangeViewCallback, this));
+    app_core.RegisterUpdateStateCallback(std::bind_front(&App::UpdateStateCallback, this));
 
     return true;
 }
@@ -53,9 +61,9 @@ void App::UpdateStateCallback(std::shared_ptr<Core::States::IState>state, Widget
 
 void App::CheckConfig()
 {
-    auto *config = Config::get_app_config_instance();
+    auto& config = Config::AppConfig::GetInstance();
 
-    if (!config->Contains("spotify_client"))
+    if (!config.Contains("spotify_client"))
     {
         std::cerr << "Invalid Spotify setup. (prompting user...)" << std::endl;
         wxTextEntryDialog client_id_dialog(nullptr, "Enter your Spotify Client ID:", "Spotify Setup");
@@ -69,8 +77,8 @@ void App::CheckConfig()
         {
             return;
         }
-        config->Set("spotify_client/client_id", client_id_dialog.GetValue().ToStdString());
-        config->Set("spotify_client/client_secret", client_secret_dialog.GetValue().ToStdString());
-        config->Save();
+        config.Set("spotify_client/client_id", client_id_dialog.GetValue().ToStdString());
+        config.Set("spotify_client/client_secret", client_secret_dialog.GetValue().ToStdString());
+        config.Save();
     }
 }

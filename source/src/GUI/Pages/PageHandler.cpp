@@ -24,7 +24,7 @@ namespace GUI::Pages
         for (int i = 1; i < 10; i++)
         {   
             wxString name = wxString::Format("dummy%d", i);
-            auto *dummyView = new GUI::Views::DummyView(this, GetSize(), (GUI::Views::ViewsID)(GUI::Views::DUMMY1_VIEW_ID + i - 1), dummy_colors[i - 1], name);
+            auto *dummyView = new GUI::Views::DummyView(this, GetSize(), static_cast<GUI::Views::ViewsID>(GUI::Views::DUMMY1_VIEW_ID + i - 1), dummy_colors[i - 1], name);
             InsertPage(i, dummyView, name, false);
         }
     }

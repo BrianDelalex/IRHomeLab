@@ -10,7 +10,7 @@ namespace Core::States
         public:
             DummyState() {}
 
-            std::shared_ptr<IState> Clone() override
+            std::shared_ptr<IState> Clone() const override
             {
                 return std::make_shared<DummyState>(*this);
             }

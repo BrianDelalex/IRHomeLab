@@ -6,7 +6,7 @@
 # include <filesystem>
 
 # include <fcntl.h>
-# include <stdlib.h>
+# include <cstdlib>
 # include <unistd.h>
 # include <sys/ioctl.h>
 
@@ -18,23 +18,18 @@
 
 namespace Core
 {
-    static std::unique_ptr<ApplicationCore> APPLICATION_CORE_INSTANCE = std::make_unique<ApplicationCore>();
-
-    ApplicationCore *get_application_core_instance()
+    ApplicationCore& ApplicationCore::GetInstance()
     {
-        return APPLICATION_CORE_INSTANCE.get();
-    }
-
-    ApplicationCore::ApplicationCore()
-    {
+        static ApplicationCore instance;
+        return instance;
     }
 
     void ApplicationCore::Init()
     {
-        m_widget_controllers[0] = std::make_unique<Controllers::SpotifyController>((WidgetsID)0);
+        m_widget_controllers[0] = std::make_unique<Controllers::SpotifyController>(static_cast<WidgetsID>(0));
         for (int i = 1; i < WIDGET_NUMBER; i++)
         {
-            m_widget_controllers[i] = std::make_unique<Core::Controllers::DummyController>((WidgetsID)i);
+            m_widget_controllers[i] = std::make_unique<Core::Controllers::DummyController>(static_cast<WidgetsID>(i));
         }
         SetupSignalHandlers();
         RegisterToIrDriver();
@@ -102,7 +97,7 @@ namespace Core
 
         if (sig_int >= IRButton::BTN_ONE)
         {
-            WidgetsID widget_id = static_cast<WidgetsID>(sig_int - (int)IRButton::BTN_ONE);
+            WidgetsID widget_id = static_cast<WidgetsID>(sig_int - static_cast<int>(IRButton::BTN_ONE));
             if (widget_id >= WidgetsID::UNDEFINED)
             {
                 std::cerr << __FUNCTION__ << " [WARNING]: Received button code " << sig_int << " which maps to invalid widget_id " << widget_id << std::endl;
@@ -120,7 +115,7 @@ namespace Core
             return;
         }
 
-        m_widget_controllers.at(m_selected_widget)->CommandHandler((IRButton) sig_int);
+        m_widget_controllers.at(m_selected_widget)->CommandHandler(static_cast<IRButton>(sig_int));
         // TODO - Call Controller for selected widget to update state based on button pressed
     }
 

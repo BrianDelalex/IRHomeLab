@@ -59,8 +59,8 @@ namespace Core::Controllers
     SpotifyController::SpotifyController(WidgetsID id) :
         IController(id)
     {
-        auto config = Config::get_app_config_instance();
-        if (!config->Contains("spotify/access_token"))
+        auto& config = Config::AppConfig::GetInstance();
+        if (!config.Contains("spotify/access_token"))
         {
             m_login_thread = std::thread(&SpotifyController::Login, this);
         }
@@ -78,18 +78,17 @@ namespace Core::Controllers
     }
 
     void SpotifyController::Login()
-    try
     {
-        auto config = Config::get_app_config_instance();
+        auto& config = Config::AppConfig::GetInstance();
 
-        if (!config->Contains("spotify_client/client_id") || !config->Contains("spotify_client/client_secret"))
+        if (!config.Contains("spotify_client/client_id") || !config.Contains("spotify_client/client_secret"))
         {
             std::cerr << "SpotifyController::Login [ERROR]: Spotify client credentials not configured" << std::endl;
             return;
         }
 
-        std::string client_id     = config->Get<std::string>("spotify_client/client_id");
-        std::string client_secret = config->Get<std::string>("spotify_client/client_secret");
+        std::string client_id     = config.Get<std::string>("spotify_client/client_id");
+        std::string client_secret = config.Get<std::string>("spotify_client/client_secret");
         std::string redirect_uri  = "http://127.0.0.1:3000/";
         std::string scope         = "user-read-private user-read-email user-modify-playback-state "
                                     "user-read-playback-state app-remote-control streaming "
@@ -135,10 +134,26 @@ namespace Core::Controllers
 
         if (res && res->status == 200)
         {
-            auto token_data = nlohmann::json::parse(res->body);
-            token_data["expires_at"] = std::time(nullptr) + token_data["expires_in"].get<int>();
-            config->SetSection("spotify", token_data);
-            config->Save();
+            nlohmann::json token_data;
+            int expires_in = 0;
+            try
+            {
+                token_data = nlohmann::json::parse(res->body);
+                expires_in = token_data["expires_in"].get<int>();
+            }
+            catch (const nlohmann::json::parse_error &e)
+            {
+                std::cerr << "SpotifyController::Login [ERROR]: Failed to parse token response: " << e.what() << std::endl;
+                return;
+            }
+            catch (const nlohmann::json::type_error &e)
+            {
+                std::cerr << "SpotifyController::Login [ERROR]: Unexpected token response format: " << e.what() << std::endl;
+                return;
+            }
+            token_data["expires_at"] = std::time(nullptr) + expires_in;
+            config.SetSection("spotify", token_data);
+            config.Save();
             std::cout << "SpotifyController::Login [INFO]: Access token saved" << std::endl;
         }
         else
@@ -149,37 +164,33 @@ namespace Core::Controllers
             std::cerr << std::endl;
         }
     }
-    catch (const std::exception &e)
-    {
-        std::cerr << "SpotifyController::Login [ERROR]: " << e.what() << std::endl;
-    }
 
     void SpotifyController::RefreshToken()
     {
-        auto config = Config::get_app_config_instance();
+        auto& config = Config::AppConfig::GetInstance();
 
-        if (!config->Contains("spotify_client/client_id") || !config->Contains("spotify_client/client_secret"))
+        if (!config.Contains("spotify_client/client_id") || !config.Contains("spotify_client/client_secret"))
         {
             std::cerr << "SpotifyController::RefreshToken [ERROR]: Spotify client credentials not configured" << std::endl;
             return;
         }
 
-        if (!config->Contains("spotify/refresh_token"))
+        if (!config.Contains("spotify/refresh_token"))
         {
             std::cerr << "SpotifyController::RefreshToken [ERROR]: No refresh token in configuration" << std::endl;
             return;
         }
 
-        if (config->Contains("spotify/expires_at"))
+        if (config.Contains("spotify/expires_at"))
         {
-            std::time_t expires_at = config->Get<std::time_t>("spotify/expires_at");
+            std::time_t expires_at = config.Get<std::time_t>("spotify/expires_at");
             if (std::time(nullptr) < expires_at - 60)
                 return;
         }
 
-        std::string client_id     = config->Get<std::string>("spotify_client/client_id");
-        std::string client_secret = config->Get<std::string>("spotify_client/client_secret");
-        std::string refresh_token = config->Get<std::string>("spotify/refresh_token");
+        std::string client_id     = config.Get<std::string>("spotify_client/client_id");
+        std::string client_secret = config.Get<std::string>("spotify_client/client_secret");
+        std::string refresh_token = config.Get<std::string>("spotify/refresh_token");
 
         httplib::SSLClient cli("accounts.spotify.com");
         httplib::Params params = {
@@ -194,12 +205,28 @@ namespace Core::Controllers
 
         if (res && res->status == 200)
         {
-            auto token_data = nlohmann::json::parse(res->body);
+            nlohmann::json token_data;
+            int expires_in = 0;
+            try
+            {
+                token_data = nlohmann::json::parse(res->body);
+                expires_in = token_data["expires_in"].get<int>();
+            }
+            catch (const nlohmann::json::parse_error &e)
+            {
+                std::cerr << "SpotifyController::RefreshToken [ERROR]: Failed to parse token response: " << e.what() << std::endl;
+                return;
+            }
+            catch (const nlohmann::json::type_error &e)
+            {
+                std::cerr << "SpotifyController::RefreshToken [ERROR]: Unexpected token response format: " << e.what() << std::endl;
+                return;
+            }
             if (!token_data.contains("refresh_token"))
                 token_data["refresh_token"] = refresh_token;
-            token_data["expires_at"] = std::time(nullptr) + token_data["expires_in"].get<int>();
-            config->SetSection("spotify", token_data);
-            config->Save();
+            token_data["expires_at"] = std::time(nullptr) + expires_in;
+            config.SetSection("spotify", token_data);
+            config.Save();
             std::cout << "SpotifyController::RefreshToken [INFO]: Token refreshed" << std::endl;
         }
         else
