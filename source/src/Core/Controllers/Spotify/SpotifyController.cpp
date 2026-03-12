@@ -74,7 +74,64 @@ namespace Core::Controllers
 
     void SpotifyController::CommandHandler(const IRButton &btn)
     {
+        switch (m_state.GetSubState())
+        {
+            case Core::States::SpotifySubStates::DEFAULT:
+                CommandHandlerDefault(btn);
+                break;
+            case Core::States::SpotifySubStates::DEVICE_SELECTION:
+            CommandHandlerDeviceSelection(btn);
+                break;
+        }
+    }
 
+    void SpotifyController::CommandHandlerDefault(const IRButton &btn)
+    {
+        switch (btn)
+        {
+            case IRButton::BTN_SETUP:
+                m_state.m_sub_state = States::SpotifySubStates::DEVICE_SELECTION;
+                m_state.m_device_selection_state.m_available_devices = {"Test", "anotehr", "eizjo"};
+                m_state.m_device_selection_state.m_device_selector = 0;
+                break;
+            default:
+                std::cerr << __PRETTY_FUNCTION__ << ": Unimplemented handler for IRButton " << btn << std::endl;
+                return;
+        }
+        UpdateState(m_state.Clone());
+    }
+
+    void SpotifyController::CommandHandlerDeviceSelection(const IRButton &btn)
+    {
+        auto &device_select_state = m_state.m_device_selection_state;
+        switch (btn)
+        {
+            case IRButton::BTN_SETUP:
+                m_state.m_sub_state = States::SpotifySubStates::DEFAULT;
+                break;
+            case IRButton::BTN_PREVIOUS:
+                if (device_select_state.m_device_selector == 0)
+                {
+                    device_select_state.m_device_selector = device_select_state.m_available_devices.size() - 1;
+                    break;
+                }
+                device_select_state.m_device_selector--;
+                break;
+            case IRButton::BTN_NEXT:
+                if (device_select_state.m_device_selector >= device_select_state.m_available_devices.size() - 1)
+                {
+                    device_select_state.m_device_selector = 0;
+                    break;
+                }
+                device_select_state.m_device_selector = device_select_state.m_device_selector + 1;
+                break;
+            case IRButton::BTN_ENTER:
+                //TODO - Call spotify API To select device.
+            default:
+                std::cerr << __PRETTY_FUNCTION__ << ": Unimplemented handler for IRButton " << btn << std::endl;
+                return;
+        }
+        UpdateState(m_state.Clone());
     }
 
     void SpotifyController::Login()

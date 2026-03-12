@@ -18,6 +18,8 @@ namespace GUI::Views
             void UpdateView(std::shared_ptr<Core::States::IState>state) override;
 
             GUI::Views::Components::SpotifyPlayerPanel *m_player;
+            wxPanel *m_left_panel;
+            wxPanel *m_right_panel;
     };
 
 } //  namespace GUI::Views

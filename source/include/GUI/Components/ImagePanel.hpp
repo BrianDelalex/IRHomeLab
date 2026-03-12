@@ -12,14 +12,14 @@ namespace GUI::Components
         public:
             ImagePanel(wxWindow *parent, const wxSize &size);
 
-            void SetImage(std::shared_ptr<wxImage> image);
+            void SetImage(const wxImage &image);
         private:
             void OnPaint(wxPaintEvent &evt);
             void Repaint(void);
             void RefreshPanel(wxDC &dc);
 
-            std::shared_ptr<wxImage> m_image;
-            
+            std::unique_ptr<wxImage> m_image;
+
     };
 }
 

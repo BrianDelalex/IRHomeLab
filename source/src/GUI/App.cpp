@@ -12,6 +12,7 @@
 wxIMPLEMENT_APP(App);
 bool App::OnInit(void)
 {
+    wxImage::AddHandler(new wxPNGHandler());
     frame = new GUI::Frames::MainFrame(nullptr, wxID_ANY, wxSize(1920, 1080));
     frame->Show();
     CheckConfig();

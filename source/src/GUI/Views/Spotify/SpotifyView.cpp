@@ -13,11 +13,20 @@ namespace GUI::Views
 
     void SpotifyView::CreateView()
     {
-        SetBackgroundColour(*wxGREEN);
-        wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+        wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 
-        m_player = new GUI::Views::Components::SpotifyPlayerPanel(this, GetSize());
-        sizer->Add(m_player, 0, wxALL | wxEXPAND, 10);
+        const wxColour background(30, 30, 30);
+
+        m_left_panel = new wxPanel(this, wxID_ANY);
+        m_left_panel->SetBackgroundColour(background);
+        sizer->Add(m_left_panel, 1, wxEXPAND);
+
+        m_player = new GUI::Views::Components::SpotifyPlayerPanel(this, wxDefaultSize);
+        sizer->Add(m_player, 1, wxEXPAND);
+
+        m_right_panel = new wxPanel(this, wxID_ANY);
+        m_right_panel->SetBackgroundColour(background);
+        sizer->Add(m_right_panel, 1, wxEXPAND);
 
         this->SetSizer(sizer);
     }
@@ -25,7 +34,6 @@ namespace GUI::Views
     void SpotifyView::UpdateView(std::shared_ptr<Core::States::IState>state)
     {
         std::cout << __FUNCTION__ << " [INFO]: Updating Spotify view" << std::endl;
-        SetBackgroundColour(*wxWHITE);
         m_player->UpdateState(state);
     }
 } //  namespace GUI::Views

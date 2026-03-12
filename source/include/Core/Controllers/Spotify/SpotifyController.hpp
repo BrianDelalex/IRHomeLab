@@ -4,6 +4,7 @@
 # include <thread>
 
 # include "Core/Controllers/IController.hpp"
+# include "Core/States/SpotifyState.hpp"
 
 namespace Core::Controllers
 {
@@ -14,11 +15,14 @@ namespace Core::Controllers
             ~SpotifyController();
 
             void CommandHandler(const IRButton &btn);
+            void CommandHandlerDefault(const IRButton &btn);
+            void CommandHandlerDeviceSelection(const IRButton &btn);
         private:
             void Login(void);
             void RefreshToken(void);
 
             std::thread m_login_thread;
+            States::SpotifyState m_state;
     };
 }  //  Core::Controllers
 
