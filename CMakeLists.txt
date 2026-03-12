@@ -27,10 +27,12 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ./source/include
-    ./third_party/cpp-httplib
     ./third_party/nlohmann_json/single_include
     ${CMAKE_SYSROOT}/usr/include/wx-3.2
     ${CMAKE_SYSROOT}/usr/lib/aarch64-linux-gnu/wx/include/gtk3-unicode-3.2)
+
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE
+    ./third_party/cpp-httplib)
 
 target_link_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_SYSROOT}/lib/aarch64-linux-gnu
